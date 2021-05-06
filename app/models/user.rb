@@ -12,9 +12,9 @@ class User < ApplicationRecord
   validates :name, length: { minimum: 2, maximum: 20 }, uniqueness: true
   validates :introduction, length: { maximum: 50 }
 
-  has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "followed_id"
-  has_many :relationships, class_name: "Relationship", foreign_key: "follower_id"
-  has_many :followers, through: :reverse_of_relationships, source:follower_id
+  has_many :reverse_of_relationships, class_name: "Relationship", foreign_key: "followed_id", dependent: :destroy
+  has_many :relationships, class_name: "Relationship", foreign_key: "follower_id", dependent: :destroy
+  has_many :followers, through: :reverse_of_relationships, source: :follower
   has_many :followings, through: :relationships, source: :followed
 
   def follow(user_id)
@@ -26,7 +26,7 @@ class User < ApplicationRecord
   end
 
   def following?(user)
-    followings.inclede?(user)
+    followings.include?(user)
   end
 end
 
